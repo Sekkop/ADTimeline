@@ -14,6 +14,7 @@
 
 Param (
 [parameter(Mandatory=$false)][string]$server = $null,
+[parameter(Mandatory=$false)][string]$OutputDir = $null,
 [parameter(Mandatory=$false)]$customgroups = $null,
 [parameter(Mandatory=$false)][switch]$nofwdSMTP
 )
@@ -274,38 +275,38 @@ if($domainfqdn)
 	{
 	if($domainfqdn.length -ge $maxfilenamelen)
 		{
-		$logfilename = "logfile_" + $domainfqdn.substring(0,$maxfilenamelen) + ".log"
-		$timelinefilename = "timeline_" + $domainfqdn.substring(0,$maxfilenamelen) + ".csv"
-		$adobjectsfilename = "ADobjects_" + $domainfqdn.substring(0,$maxfilenamelen) + ".xml"
-		$gcADobjectsfilename = "gcADobjects_" + $domainfqdn.substring(0,$maxfilenamelen) + ".xml"
+		$logfilename = $OutputDir + "logfile_" + $domainfqdn.substring(0,$maxfilenamelen) + ".log"
+		$timelinefilename = $OutputDir + "timeline_" + $domainfqdn.substring(0,$maxfilenamelen) + ".csv"
+		$adobjectsfilename = $OutputDir + "ADobjects_" + $domainfqdn.substring(0,$maxfilenamelen) + ".xml"
+		$gcADobjectsfilename = $OutputDir + "gcADobjects_" + $domainfqdn.substring(0,$maxfilenamelen) + ".xml"
 		}
 	else {
-		$logfilename = "logfile_" + $domainfqdn + ".log"
-		$timelinefilename = "timeline_" + $domainfqdn + ".csv"
-		$adobjectsfilename = "ADobjects_" + $domainfqdn + ".xml"
-		$gcADobjectsfilename = "gcADobjects_" + $domainfqdn + ".xml"
+		$logfilename = $OutputDir + "logfile_" + $domainfqdn + ".log"
+		$timelinefilename = $OutputDir + "timeline_" + $domainfqdn + ".csv"
+		$adobjectsfilename = $OutputDir + "ADobjects_" + $domainfqdn + ".xml"
+		$gcADobjectsfilename = $OutputDir + "gcADobjects_" + $domainfqdn + ".xml"
 		}
-	if(test-path($logfilename)){remove-item $logfilename -force -confirm:$false}
-	Rename-item ".\logfile.log" $logfilename -force -confirm:$false
-	New-Item -ItemType File -Name $timelinefilename -force -confirm:$false | Out-Null
-	New-Item -ItemType File -Name $adobjectsfilename -force -confirm:$false | Out-Null
-	New-Item -ItemType File -Name $gcADobjectsfilename -force -confirm:$false | Out-Null
+	if(test-path($logfilename)){remove-item -Path $logfilename -force -confirm:$false}
+	Move-Item ".\logfile.log" $logfilename -force -confirm:$false
+	New-Item -ItemType File -Path $timelinefilename -force -confirm:$false | Out-Null
+	New-Item -ItemType File -Path $adobjectsfilename -force -confirm:$false | Out-Null
+	New-Item -ItemType File -Path $gcADobjectsfilename -force -confirm:$false | Out-Null
 	if($error)
 		{ "$(Get-TimeStamp) Error while setting setting filenames for output files with error $($error)" | out-file logfile.log -append
 		$error.clear()
-		$logfilename = "logfile.log"
-		$timelinefilename = "timeline.csv"
-		$adobjectsfilename = "ADobjects.xml"
-		$gcADobjectsfilename = "gcADobjects.xml"
+		$logfilename = $OutputDir + "logfile.log"
+		$timelinefilename = $OutputDir + "timeline.csv"
+		$adobjectsfilename = $OutputDir + "ADobjects.xml"
+		$gcADobjectsfilename = $OutputDir + "gcADobjects.xml"
 		}
 
 	}
 else
 	{
-	$logfilename = "logfile.log"
-	$timelinefilename = "timeline.csv"
-	$adobjectsfilename = "ADobjects.xml"
-	$gcADobjectsfilename = "gcADobjects.xml"
+	$logfilename = $OutputDir + "logfile.log"
+	$timelinefilename = $OutputDir + "timeline.csv"
+	$adobjectsfilename = $OutputDir + "ADobjects.xml"
+	$gcADobjectsfilename = $OutputDir + "gcADobjects.xml"
 	}
 
 #Getting root of the configuration partition
@@ -2436,7 +2437,7 @@ if($gcobjects)
 	$criticalobjects += $gcobjects
 	}
 else {
-	remove-item $gcADobjectsfilename -force -confirm:$false
+	remove-item -Path $gcADobjectsfilename -force -confirm:$false
 	}
 
 
